@@ -22,7 +22,7 @@ Desk::Desk() {
     desk[7][6] = new Knight(false);
     desk[7][2] = new Bishop(false);
     desk[7][5] = new Bishop(false);
-    desk[7][3] = new Queen(false);
+    desk[3][3] = new Queen(false);
     desk[7][4] = new King(false);
 
     for (int i = 0; i < 8; i++){

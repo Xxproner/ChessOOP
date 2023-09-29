@@ -3,13 +3,13 @@ bool turn = true;
 
 void Rook::move(const char* step, Desk& desk){
     short int div; //check stand move
-    if(desk[step[4] - '1'][step[3] - 'a'] != nullptr && desk[step[4] - '1'][step[3] - 'a']->color() == turn)
+    if((desk[step[4] - '1'][step[3] - 'a'] != nullptr) && (desk[step[4] - '1'][step[3] - 'a']->color() == turn))
         throw except("not available piece track");
     if (step[0] == step[3]){ //по вертикали
         div = step[1] < step[4] ? 1 : -1;
         int in = step[1] + div;
         while (in != step[4]){
-            if (desk[in][step[0]] != nullptr)
+            if (desk[in - '1'][step[0] - 'a'] != nullptr)
                 throw except("not available piece track");
             in += div;
         }
@@ -18,7 +18,7 @@ void Rook::move(const char* step, Desk& desk){
         div = step[0] < step[3] ? 1 : -1;
         int in = step[1] + div;
         while (in != step[4]){
-            if (desk[in][step[0]] != nullptr)
+            if (desk[in - '1'][step[0] - 'a'] != nullptr)
                 throw except("not available piece track");
             in += div;
         }
@@ -55,17 +55,16 @@ void Bishop::move(const char* step,  Desk& desk)  {
         (desk[step[4] - '1'][step[3] - 'a'] != nullptr && desk[step[4] - '1'][step[3] - 'a']->color() == turn)){
         throw except("not available piece track");
     }
-
     short int xdiv, ydiv;
     xdiv = step[1] < step[4] ? 1 : -1;
     ydiv = step[0] < step[3] ? 1 : -1;
     int xin, yin; xin = step[1] + xdiv; yin = step[0] + ydiv;
-        while (xin != step[4] && yin != step[3]) {
-            if (desk[xin - '1'][yin - 'a'] != nullptr) {
-                throw except("not available piece track");
-            }
-            xin += xdiv; yin += ydiv;
+    while ((xin != step[4]) && (yin != step[3])) {
+        if (desk[xin - '1'][yin - 'a'] != nullptr) {
+            throw except("not available piece track");
         }
+        xin += xdiv; yin += ydiv;
+    }
 }
 
 void Queen::move(const char* step, Desk& desk) {
@@ -93,6 +92,7 @@ void King::move(const char* step, Desk& desk){
     else {
         throw except("not available piece track");
     }
+
 }
 
 void Pawn::move(const char* step,  Desk& desk) {
