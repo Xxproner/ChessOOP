@@ -5,7 +5,7 @@
 bool _result = false;
 extern bool turn;
 
-void check_impossible_move(const char *step, Desk &desk);
+bool check_impossible_move(const Desk& desk);
 
 //const char* operator+ (char*) - white operator char* + char*
 inline void check_break_frame(const char* step){
@@ -78,32 +78,65 @@ void step(const char* step, Desk& desk) {
     }
 
     try{
-        desk[step[2] - '1'][step[1] - 'a']->move(step + 1, desk);
-        try {
-            temp = desk[step[5] - '1'][step[4] - 'a'];
-            desk[step[5] - '1'][step[4] - 'a'] = desk[step[2] - '1'][step[1] - 'a'];
-            desk[step[2] - '1'][step[1] - 'a'] = nullptr;
-            check_impossible_move(step, desk);
-        }
-        catch(const except& ex){
-            desk[step[2] - '1'][step[1] - 'a'] = desk[step[5] - '1'][step[4] - 'a'];
-            desk[step[5] - '1'][step[4] - 'a'] = temp;
-            throw except("impossible move");
-        }
-        //проверка на невозможный ход, если ты открыл короля или
-        //не убрал короля из-под шаха
+        desk[step[2] - '1'][step[1] - 'a']->move(step + 1, desk, turn);
     }
     catch(const except& ex){
         throw ex;
     }
+
+    temp = desk[step[5] - '1'][step[4] - 'a'];
+    desk[step[5] - '1'][step[4] - 'a'] = desk[step[2] - '1'][step[1] - 'a'];
+    desk[step[2] - '1'][step[1] - 'a'] = nullptr;
+    turn = turn^true;
+
+    if (!check_impossible_move(desk)){ //back to last position
+        desk[step[2] - '1'][step[1] - 'a'] = desk[step[5] - '1'][step[4] - 'a'];
+        desk[step[5] - '1'][step[4] - 'a'] = temp;
+        turn = turn^true;
+        throw except("impossible move");
+    }
     delete temp;
+    if (desk[step[5] - '1'][step[4] - 'a']->sign() == 'e'){
+        static_cast<Pawn*>(desk[step[5] - '1'][step[4] - 'a'])->fmove(); // sure it is a pawn
+        if (step[5] == '1' || step[5] == '8') {
+            bool command = true;
+            std::cout << "your choice is : \n Q, N, R, B ?\n";
+            while (command) {
+                char e = std::getchar();
+                if (e == 'Q') {
+                    static_cast<Pawn*>(desk[step[5] - '1'][step[4] - 'a'])->reset_trans(new Queen(turn));
+                    static_cast<Pawn*>(desk[step[5] - '1'][step[4] - 'a'])->set_sign('Q');
+                    command = false;
+                } else if (e == 'N') {
+                    static_cast<Pawn*>(desk[step[5] - '1'][step[4] - 'a'])->reset_trans(new Knight(turn));
+                    static_cast<Pawn*>(desk[step[5] - '1'][step[4] - 'a'])->set_sign('N');
+                    command = false;
+                } else if (e == 'R') {
+                    static_cast<Pawn*>(desk[step[5] - '1'][step[4] - 'a'])->reset_trans(new Rook(turn));
+                    static_cast<Pawn*>(desk[step[5] - '1'][step[4] - 'a'])->set_sign('R');
+                    command = false;
+                } else if (e == 'B') {
+                    static_cast<Pawn*>(desk[step[5] - '1'][step[4] - 'a'])->reset_trans(new Rook(turn));
+                    static_cast<Pawn*>(desk[step[5] - '1'][step[4] - 'a'])->set_sign('B');
+                    command = false;
+                } else {
+                    std::cout  << "please, choose possible piece : \n R, N, B, Q" << std::endl;
+                    std::getchar();
+                }
+            }
+        }
+    }
+    else if (desk[step[5] - '1'][step[4] - 'a']->sign() == 'K'){
+        desk.set_king_coordinate(turn^true, step + 4);
+    }
+
 }
 
-void check_impossible_move(const char *step, Desk& desk) {
+bool check_impossible_move(const Desk& desk) {
     char ctemp[6];
     for (int i = 0; i < 8 ; ++i) {
         for (int j = 0; j < 8; ++j) {
-            if ((desk[i][j] != nullptr) && (desk[i][j]->color() != turn)) {
+            if ((desk[i][j] != nullptr) && (desk[i][j]->color() == turn)) { // step was done
                 auto lambda = [&ctemp](int i, int j, const char *coordinate) -> char * {
                     std::map<int, char> map = {{1, '1'}, {2, '2'}, {3, '3'},
                                                {4, '4'}, {5, '5'}, {6, '6'},
@@ -116,8 +149,8 @@ void check_impossible_move(const char *step, Desk& desk) {
                     return ctemp;
                 };
                 try {
-                    desk[i][j]->move(lambda(j, i, desk.get_king_coordinate(turn)), desk);
-                    throw except("impossible move");
+                    desk[i][j]->move(lambda(j, i, desk.get_king_coordinate(turn^true)), desk, turn);
+                    return false;
                 }
                 catch (const except &ex) {
                     //nothing
@@ -125,6 +158,7 @@ void check_impossible_move(const char *step, Desk& desk) {
             }
         }
     }
+    return true;
 }
 int main(int argc, char* argv[]){
     Desk desk;
@@ -146,14 +180,16 @@ int main(int argc, char* argv[]){
         for (int j = 0; j < 8; ++j) {
             if ((desk[i][j] != nullptr) && (desk[i][j]->color() != turn)) {
                 try {
-                    desk[i][j]->move(lambda(j, i, "a4"), desk);
-                    throw except("impossible move");
+                    desk[i][j]->move(lambda(j, i, "e1"), desk, turn^true);
+                    std::cerr << "impossible move";
+                    return -1;
+//                    throw except("impossible move"); //проблема в перехватывании исключения, оно перехватывается catch (const except& ex)
                 }
                 catch (const except &ex) {
                     //nothing
                 }
             }
-            std::cout << lambda(j, i, "a4") << '\t';
+            std::cout << lambda(j, i, "e1") << '\t';
         }
         std::cout << std::endl;
 
@@ -167,7 +203,6 @@ int main(int argc, char* argv[]){
             check_break_frame(move_piece);
             try {
                 step(move_piece, desk);
-                turn ^= true;
 
             }
             catch(except& ex){
