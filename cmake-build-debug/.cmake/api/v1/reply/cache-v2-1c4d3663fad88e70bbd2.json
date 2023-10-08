@@ -55,7 +55,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/mnt/c/Users/Pasha/CLionProjects/chess/cmake-build-debug"
+			"value" : "/home/pasha/ChessOOP/cmake-build-debug"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -679,7 +679,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/mnt/c/Users/Pasha/CLionProjects/chess"
+			"value" : "/home/pasha/ChessOOP"
 		},
 		{
 			"name" : "CMAKE_INSTALL_PREFIX",
@@ -1247,7 +1247,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/mnt/c/Users/Pasha/CLionProjects/chess/cmake-build-debug"
+			"value" : "/home/pasha/ChessOOP/cmake-build-debug"
 		},
 		{
 			"name" : "chess_IS_TOP_LEVEL",
@@ -1271,7 +1271,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/mnt/c/Users/Pasha/CLionProjects/chess"
+			"value" : "/home/pasha/ChessOOP"
 		}
 	],
 	"kind" : "cache",

@@ -7,45 +7,74 @@
 #include <cstring>
 
 struct Piece;
-class Memento;
 
 class Desk {
 private:
-    std::array<std::array<Piece*, 8>, 8> desk;
+    Desk *prev_desk_state;
+    std::array<std::array<Piece *, 8>, 8> desk;
     char white_king_coordinate[3] = "e1";
     char black_king_coordinate[3] = "e8";
+    bool move_turn;
+    bool _result;
+    void shapshot();
 
-    Memento* shapshot() const;
 public:
 
     Desk();
 
-    void print_desk(bool _turn) const;
+    void print_desk() const;
 
-    const char* get_king_coordinate(bool) const;
-    void set_king_coordinate(bool, const char*);
+    const char *get_king_coordinate(bool) const;
 
-    std::array<Piece*, 8>& operator[](int i){ return desk[i]; };
-    const std::array<Piece*, 8>& operator[](int i) const{ return desk[i]; };
+    void set_king_coordinate(bool, const char *);
+
+    std::array<Piece *, 8> &operator[](int i) { return desk[i]; };
+
+    const std::array<Piece *, 8> &operator[](int i) const { return desk[i]; };
+
+    Desk(const Desk& desk);
+
+    Desk(Desk&& desk) noexcept; //rule of three
+
+    Desk& operator=(const Desk& desk);
+
+    Desk& operator=(Desk&& desk) noexcept;
+
+    void turn_move_turn(){ move_turn ^= true; };
+
+    bool turn() const { return move_turn; };
+
+    bool is_mate() const{ return _result; };
 
     ~Desk();
+/*    void restore(Memento *memento);
+
+    Memento *save() const;
+
+
+};*/
 };
 
-class Memento{  //first creating last position and in the case "impossible move"
+/*class Memento{  //first creating last position and in the case "impossible move"
                 //back this state
                 // then think about save the whole game with not full contain but changing between two last moving
 public:
-    explicit Memento(const Desk& desk);
-    Memento(Memento&& memento) noexcept;
-    void restore();
+    explicit Memento(const std::array<std::array<Piece*, 8>, 8>& desk); //deeply copy
     ~Memento();
 private:
     std::array<std::array<Piece*, 8>, 8> _desk;
 };
 
 class CareTaker{
-
-};
+private:
+    Memento *_memento; //пока один, затем можно добавить какой-нибудь контейнер с древовидным ветвлением
+    Desk *_desk;
+public:
+    explicit CareTaker(Desk *desk) : _desk(desk){ };
+    void back_up();
+    void Undo();
+    ~CareTaker();
+};*/
 
 class except : public std::exception{
 public:
@@ -62,6 +91,7 @@ private:
 
 struct Piece{
     explicit Piece(bool color) : _color(color){ };
+    virtual Piece* clone() const = 0;
     bool color() const { return _color; };
     virtual void move(const char* step, const Desk& desk, bool _turn) const = 0;
     virtual char sign() const{ return 'o'; };
@@ -73,15 +103,15 @@ protected:
 
 struct Rook : public Piece{
     explicit  Rook(bool color) : Piece(color) { };
+    Piece* clone() const override;
     void move(const char* step, const Desk& desk, bool _turn) const override;
     char sign() const override { return 'R'; };
     ~Rook() override = default;
-
-
 };
 
 struct Knight : public Piece{
     explicit Knight(bool color) : Piece(color) { };
+    Piece* clone() const override;
     void move(const char* step,  const Desk& desk, bool _turn) const override;
     char sign() const override { return 'N'; };
     ~Knight() override = default;
@@ -90,11 +120,10 @@ struct Knight : public Piece{
 
 struct Bishop : public Piece{
     explicit Bishop(bool color) : Piece(color) { };
-
+    Piece* clone() const override;
     void move(const char* step,  const Desk& desk, bool _turn) const override;
     char sign() const override { return 'B'; };
     ~Bishop() override = default;
-
 
 };
 
@@ -104,6 +133,7 @@ private:
     Rook rook;
 public:
     explicit Queen(bool color) : Piece(color), bishop(Bishop(color)), rook(Rook(color)) { };
+    Piece* clone() const override;
     void move(const char* step, const Desk& desk, bool _turn) const override;
     char sign() const override { return 'Q'; };
     ~Queen() override = default;
@@ -112,6 +142,7 @@ public:
 
 struct Pawn : public Piece{
     explicit Pawn(bool color) : Piece(color){ };
+    Piece* clone() const override;
     void move(const char* step,  const Desk& desk, bool _turn) const override;
     char sign() const override { return _sign; };
     void set_sign(char sign){ _sign = sign; }
@@ -119,6 +150,9 @@ struct Pawn : public Piece{
     void fmove(){ start_move = false; };
     void reset_trans(Piece *trans) {
         _trans.reset(trans);
+    }
+    Piece* get_trans() const{
+        return _trans.get();
     }
 private:
     char _sign = 'e';
@@ -128,6 +162,7 @@ private:
 
 struct King : public Piece{
     explicit King(bool color) : Piece(color) { };
+    Piece* clone() const override;
     void move(const char* step,  const Desk& desk, bool _turn) const override ;
     char sign() const override { return 'K'; };
     ~King() override = default;

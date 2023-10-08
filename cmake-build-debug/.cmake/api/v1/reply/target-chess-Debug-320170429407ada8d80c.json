@@ -54,7 +54,9 @@
 			[
 				0,
 				2,
-				4
+				4,
+				5,
+				6
 			]
 		}
 	],
@@ -89,7 +91,9 @@
 			[
 				0,
 				2,
-				4
+				4,
+				5,
+				6
 			]
 		},
 		{
@@ -129,6 +133,18 @@
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
 			"path" : "desk.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "memento.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "except.cpp",
 			"sourceGroupIndex" : 0
 		}
 	],

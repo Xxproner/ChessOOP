@@ -1,4 +1,4 @@
-CMakeFiles/chess.dir/pieces.cpp.o: /home/pasha/ChessOOP/pieces.cpp \
+CMakeFiles/chess.dir/except.cpp.o: /home/pasha/ChessOOP/except.cpp \
  /usr/include/stdc-predef.h /home/pasha/ChessOOP/pieces.h \
  /usr/include/c++/10/array /usr/include/c++/10/utility \
  /usr/include/x86_64-linux-gnu/c++/10/bits/c++config.h \

@@ -57,10 +57,10 @@ RM = /usr/local/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /mnt/c/Users/Pasha/CLionProjects/chess
+CMAKE_SOURCE_DIR = /home/pasha/ChessOOP
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /mnt/c/Users/Pasha/CLionProjects/chess/cmake-build-debug
+CMAKE_BINARY_DIR = /home/pasha/ChessOOP/cmake-build-debug
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -87,9 +87,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/c/Users/Pasha/CLionProjects/chess/cmake-build-debug/CMakeFiles /mnt/c/Users/Pasha/CLionProjects/chess/cmake-build-debug//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/pasha/ChessOOP/cmake-build-debug/CMakeFiles /home/pasha/ChessOOP/cmake-build-debug//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/c/Users/Pasha/CLionProjects/chess/cmake-build-debug/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/pasha/ChessOOP/cmake-build-debug/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -153,6 +153,30 @@ desk.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chess.dir/build.make CMakeFiles/chess.dir/desk.cpp.s
 .PHONY : desk.cpp.s
 
+except.o: except.cpp.o
+.PHONY : except.o
+
+# target to build an object file
+except.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chess.dir/build.make CMakeFiles/chess.dir/except.cpp.o
+.PHONY : except.cpp.o
+
+except.i: except.cpp.i
+.PHONY : except.i
+
+# target to preprocess a source file
+except.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chess.dir/build.make CMakeFiles/chess.dir/except.cpp.i
+.PHONY : except.cpp.i
+
+except.s: except.cpp.s
+.PHONY : except.s
+
+# target to generate assembly for a file
+except.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chess.dir/build.make CMakeFiles/chess.dir/except.cpp.s
+.PHONY : except.cpp.s
+
 main.o: main.cpp.o
 .PHONY : main.o
 
@@ -176,6 +200,30 @@ main.s: main.cpp.s
 main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chess.dir/build.make CMakeFiles/chess.dir/main.cpp.s
 .PHONY : main.cpp.s
+
+memento.o: memento.cpp.o
+.PHONY : memento.o
+
+# target to build an object file
+memento.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chess.dir/build.make CMakeFiles/chess.dir/memento.cpp.o
+.PHONY : memento.cpp.o
+
+memento.i: memento.cpp.i
+.PHONY : memento.i
+
+# target to preprocess a source file
+memento.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chess.dir/build.make CMakeFiles/chess.dir/memento.cpp.i
+.PHONY : memento.cpp.i
+
+memento.s: memento.cpp.s
+.PHONY : memento.s
+
+# target to generate assembly for a file
+memento.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chess.dir/build.make CMakeFiles/chess.dir/memento.cpp.s
+.PHONY : memento.cpp.s
 
 pieces.o: pieces.cpp.o
 .PHONY : pieces.o
@@ -213,9 +261,15 @@ help:
 	@echo "... desk.o"
 	@echo "... desk.i"
 	@echo "... desk.s"
+	@echo "... except.o"
+	@echo "... except.i"
+	@echo "... except.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... memento.o"
+	@echo "... memento.i"
+	@echo "... memento.s"
 	@echo "... pieces.o"
 	@echo "... pieces.i"
 	@echo "... pieces.s"

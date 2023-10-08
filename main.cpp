@@ -2,9 +2,6 @@
 #include <exception>
 #include <map>
 
-bool _result = false;
-extern bool turn;
-
 bool check_impossible_move(const Desk& desk);
 
 //const char* operator+ (char*) - white operator char* + char*
@@ -23,7 +20,7 @@ void step(const char* step, Desk& desk) {
         case 'R':
 //        case 'r':
             if (desk[step[2] - '1'][step[1] - 'a'] != nullptr
-                && desk[step[2] - '1'][step[1] - 'a']->color() == turn
+                && desk[step[2] - '1'][step[1] - 'a']->color() == desk.turn()
                 && desk[step[2] - '1'][step[1] - 'a']->sign() == 'R') {  }
             else {
                 throw except("not suitable piece in here");
@@ -32,7 +29,7 @@ void step(const char* step, Desk& desk) {
 //        case 'n':
         case 'N':
             if (desk[step[2] - '1'][step[1] - 'a'] != nullptr
-                && desk[step[2] - '1'][step[1] - 'a']->color() == turn
+                && desk[step[2] - '1'][step[1] - 'a']->color() == desk.turn()
                 && desk[step[2] - '1'][step[1] - 'a']->sign() == 'N') {  }
             else {
                 throw except("not suitable piece in here");
@@ -41,7 +38,7 @@ void step(const char* step, Desk& desk) {
 //        case 'b':
         case 'B':
             if (desk[step[2] - '1'][step[1] - 'a'] != nullptr
-                && desk[step[2] - '1'][step[1] - 'a']->color() == turn
+                && desk[step[2] - '1'][step[1] - 'a']->color() == desk.turn()
                 && desk[step[2] - '1'][step[1] - 'a']->sign() == 'B') { }
             else {
                 throw except("not suitable piece in here");
@@ -50,7 +47,7 @@ void step(const char* step, Desk& desk) {
 //        case 'q':
         case 'Q':
             if (desk[step[2] - '1'][step[1] - 'a'] != nullptr
-                && desk[step[2] - '1'][step[1] - 'a']->color() == turn
+                && desk[step[2] - '1'][step[1] - 'a']->color() == desk.turn()
                 && desk[step[2] - '1'][step[1] - 'a']->sign() == 'Q'){  }
             else {
                 throw except("not suitable piece in here");
@@ -58,7 +55,7 @@ void step(const char* step, Desk& desk) {
             break;
         case 'a': case 'b' : case 'c' : case 'd' : case 'e' : case 'f' : case 'g' : case 'h' :
             if (desk[step[2] - '1'][step[1] - 'a'] != nullptr
-                && desk[step[2] - '1'][step[1] - 'a']->color() == turn
+                && desk[step[2] - '1'][step[1] - 'a']->color() == desk.turn()
                 && desk[step[2] - '1'][step[1] - 'a']->sign() == 'e') {  }
             else {
                 throw except("not suitable piece in here");
@@ -67,7 +64,7 @@ void step(const char* step, Desk& desk) {
         case 'K':
 //        case 'k':
             if (desk[step[2] - '1'][step[1] - 'a'] != nullptr
-                && desk[step[2] - '1'][step[1] - 'a']->color() == turn
+                && desk[step[2] - '1'][step[1] - 'a']->color() == desk.turn()
                 && desk[step[2] - '1'][step[1] - 'a']->sign() == 'K') { }
             else {
                 throw except("not suitable piece in here");
@@ -77,8 +74,8 @@ void step(const char* step, Desk& desk) {
             throw except("available piece is R, N, B, Q, K, e");
     }
 
-    try{
-        desk[step[2] - '1'][step[1] - 'a']->move(step + 1, desk, turn);
+    try{ //check piece track
+        desk[step[2] - '1'][step[1] - 'a']->move(step + 1, desk, desk.turn());
     }
     catch(const except& ex){
         throw ex;
@@ -87,36 +84,27 @@ void step(const char* step, Desk& desk) {
     temp = desk[step[5] - '1'][step[4] - 'a'];
     desk[step[5] - '1'][step[4] - 'a'] = desk[step[2] - '1'][step[1] - 'a'];
     desk[step[2] - '1'][step[1] - 'a'] = nullptr;
-    turn = turn^true;
 
-    if (!check_impossible_move(desk)){ //back to last position
-        desk[step[2] - '1'][step[1] - 'a'] = desk[step[5] - '1'][step[4] - 'a'];
-        desk[step[5] - '1'][step[4] - 'a'] = temp;
-        turn = turn^true;
-        throw except("impossible move");
-    }
-    delete temp;
     if (desk[step[5] - '1'][step[4] - 'a']->sign() == 'e'){
-        static_cast<Pawn*>(desk[step[5] - '1'][step[4] - 'a'])->fmove(); // sure it is a pawn
         if (step[5] == '1' || step[5] == '8') {
             bool command = true;
             std::cout << "your choice is : \n Q, N, R, B ?\n";
             while (command) {
                 char e = std::getchar();
                 if (e == 'Q') {
-                    static_cast<Pawn*>(desk[step[5] - '1'][step[4] - 'a'])->reset_trans(new Queen(turn));
+                    static_cast<Pawn*>(desk[step[5] - '1'][step[4] - 'a'])->reset_trans(new Queen(desk.turn()));
                     static_cast<Pawn*>(desk[step[5] - '1'][step[4] - 'a'])->set_sign('Q');
                     command = false;
                 } else if (e == 'N') {
-                    static_cast<Pawn*>(desk[step[5] - '1'][step[4] - 'a'])->reset_trans(new Knight(turn));
+                    static_cast<Pawn*>(desk[step[5] - '1'][step[4] - 'a'])->reset_trans(new Knight(desk.turn()));
                     static_cast<Pawn*>(desk[step[5] - '1'][step[4] - 'a'])->set_sign('N');
                     command = false;
                 } else if (e == 'R') {
-                    static_cast<Pawn*>(desk[step[5] - '1'][step[4] - 'a'])->reset_trans(new Rook(turn));
+                    static_cast<Pawn*>(desk[step[5] - '1'][step[4] - 'a'])->reset_trans(new Rook(desk.turn()));
                     static_cast<Pawn*>(desk[step[5] - '1'][step[4] - 'a'])->set_sign('R');
                     command = false;
                 } else if (e == 'B') {
-                    static_cast<Pawn*>(desk[step[5] - '1'][step[4] - 'a'])->reset_trans(new Rook(turn));
+                    static_cast<Pawn*>(desk[step[5] - '1'][step[4] - 'a'])->reset_trans(new Rook(desk.turn()));
                     static_cast<Pawn*>(desk[step[5] - '1'][step[4] - 'a'])->set_sign('B');
                     command = false;
                 } else {
@@ -127,8 +115,29 @@ void step(const char* step, Desk& desk) {
         }
     }
     else if (desk[step[5] - '1'][step[4] - 'a']->sign() == 'K'){
-        desk.set_king_coordinate(turn^true, step + 4);
+        desk.set_king_coordinate(desk.turn(), step + 4);
     }
+    desk.turn_move_turn();
+
+
+    if (!check_impossible_move(desk)){ //back to last position
+        desk[step[2] - '1'][step[1] - 'a'] = desk[step[5] - '1'][step[4] - 'a'];
+        desk[step[5] - '1'][step[4] - 'a'] = temp;
+        try{
+            dynamic_cast<Pawn*>(desk[step[2] - '1'][step[1] - 'a'])->reset_trans(nullptr);
+            static_cast<Pawn*>(desk[step[2] - '1'][step[1] - 'a'])->set_sign('e');
+        }
+        catch(const std::exception& ex){
+            std::cout << ex.what() << std::endl;
+        }
+        catch(...){
+            std::cout << "Unknown exception is thrown by dynamic_cast" << std::endl;
+        }
+        desk.turn_move_turn();
+        throw except("impossible move");
+    }
+
+    delete temp;
 
 }
 
@@ -136,7 +145,7 @@ bool check_impossible_move(const Desk& desk) {
     char ctemp[6];
     for (int i = 0; i < 8 ; ++i) {
         for (int j = 0; j < 8; ++j) {
-            if ((desk[i][j] != nullptr) && (desk[i][j]->color() == turn)) { // step was done
+            if ((desk[i][j] != nullptr) && (desk[i][j]->color() == desk.turn())) { // step was done
                 auto lambda = [&ctemp](int i, int j, const char *coordinate) -> char * {
                     std::map<int, char> map = {{1, '1'}, {2, '2'}, {3, '3'},
                                                {4, '4'}, {5, '5'}, {6, '6'},
@@ -149,7 +158,7 @@ bool check_impossible_move(const Desk& desk) {
                     return ctemp;
                 };
                 try {
-                    desk[i][j]->move(lambda(j, i, desk.get_king_coordinate(turn^true)), desk, turn);
+                    desk[i][j]->move(lambda(j, i, desk.get_king_coordinate(desk.turn()^true)), desk, desk.turn());
                     return false;
                 }
                 catch (const except &ex) {
@@ -163,7 +172,7 @@ bool check_impossible_move(const Desk& desk) {
 int main(int argc, char* argv[]){
     Desk desk;
     std::cout << "LET'S START IT,\n\tGOOD LUCK FOR EVERYONE\n";
-    desk.print_desk(turn);
+    desk.print_desk();
     /*char ctemp[6];
     auto lambda = [&ctemp](int i, int j, const char *coordinate) -> char * {
         std::map<int, char> map = {{1, '1'}, {2, '2'}, {3, '3'},
@@ -195,7 +204,7 @@ int main(int argc, char* argv[]){
 
     }*/
     char move_piece[7];
-    while(!_result){
+    while(!desk.is_mate()){
         std::cin.get(move_piece, 7);
         //std::cin.ignore(INT_MAX);
         //std::cin.clear(); std::fflush(stdin)
@@ -212,7 +221,7 @@ int main(int argc, char* argv[]){
         catch(except& ex){ //why warning
             std::cout << ex.what() << std::endl;
         }
-        desk.print_desk(turn);
+        desk.print_desk();
         std::getchar();
     }
     return 0;

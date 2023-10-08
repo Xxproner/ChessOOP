@@ -1,7 +1,5 @@
-CMakeFiles/chess.dir/desk.cpp.o: \
- /mnt/c/Users/Pasha/CLionProjects/chess/desk.cpp \
- /usr/include/stdc-predef.h \
- /mnt/c/Users/Pasha/CLionProjects/chess/pieces.h \
+CMakeFiles/chess.dir/desk.cpp.o: /home/pasha/ChessOOP/desk.cpp \
+ /usr/include/stdc-predef.h /home/pasha/ChessOOP/pieces.h \
  /usr/include/c++/10/array /usr/include/c++/10/utility \
  /usr/include/x86_64-linux-gnu/c++/10/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/10/bits/os_defines.h \

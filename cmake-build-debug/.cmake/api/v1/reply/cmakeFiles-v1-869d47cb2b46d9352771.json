@@ -140,8 +140,8 @@
 	"kind" : "cmakeFiles",
 	"paths" : 
 	{
-		"build" : "/mnt/c/Users/Pasha/CLionProjects/chess/cmake-build-debug",
-		"source" : "/mnt/c/Users/Pasha/CLionProjects/chess"
+		"build" : "/home/pasha/ChessOOP/cmake-build-debug",
+		"source" : "/home/pasha/ChessOOP"
 	},
 	"version" : 
 	{
