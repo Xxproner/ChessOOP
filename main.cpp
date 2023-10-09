@@ -1,10 +1,6 @@
 #include "pieces.h"
 #include <exception>
-#include <map>
 
-bool check_impossible_move(const Desk& desk);
-
-//const char* operator+ (char*) - white operator char* + char*
 inline void check_break_frame(const char* step){
     if (step[1] > 'h' || step[1] < 'a' ||
         step[4] > 'h' || step[4] < 'a' ||
@@ -71,7 +67,15 @@ void step(const char* step, Desk& desk) {
             }
             break;
         default :
-            throw except("available piece is R, N, B, Q, K, e");
+            if (!strcmp(step, "0-0")) {
+                if (desk.short_castling())
+                    break;
+            }
+            else if (!strcmp(step, "0-0-0")) {
+                if (desk.long_castling())
+                    break;
+            }
+            throw except("available piece is R, N, B, Q, K, e or available castling");
     }
 
     try{ //check piece track
@@ -86,6 +90,7 @@ void step(const char* step, Desk& desk) {
     desk[step[2] - '1'][step[1] - 'a'] = nullptr;
 
     if (desk[step[5] - '1'][step[4] - 'a']->sign() == 'e'){
+        static_cast<Pawn*>(desk[step[5] - '1'][step[4] - 'a'])->fmove();
         if (step[5] == '1' || step[5] == '8') {
             bool command = true;
             std::cout << "your choice is : \n Q, N, R, B ?\n";
@@ -116,59 +121,34 @@ void step(const char* step, Desk& desk) {
     }
     else if (desk[step[5] - '1'][step[4] - 'a']->sign() == 'K'){
         desk.set_king_coordinate(desk.turn(), step + 4);
+        static_cast<King*>(desk[step[5] - '1'][step[4] - 'a'])->fmove();
+    }
+    else if (desk[step[5] - '1'][step[4] - 'a']->sign() == 'R'){
+        static_cast<King*>(desk[step[5] - '1'][step[4] - 'a'])->fmove();
     }
     desk.turn_move_turn();
 
-
-    if (!check_impossible_move(desk)){ //back to last position
+    if (desk.check_influenced_square(desk.get_king_coordinate(desk.turn()^true), desk.turn())){ //back to last position
         desk[step[2] - '1'][step[1] - 'a'] = desk[step[5] - '1'][step[4] - 'a'];
         desk[step[5] - '1'][step[4] - 'a'] = temp;
-        try{
-            dynamic_cast<Pawn*>(desk[step[2] - '1'][step[1] - 'a'])->reset_trans(nullptr);
-            static_cast<Pawn*>(desk[step[2] - '1'][step[1] - 'a'])->set_sign('e');
-        }
-        catch(const std::exception& ex){
-            std::cout << ex.what() << std::endl;
-        }
-        catch(...){
-            std::cout << "Unknown exception is thrown by dynamic_cast" << std::endl;
-        }
         desk.turn_move_turn();
+
+        if (dynamic_cast<Pawn*>(desk[step[2] - '1'][step[1] - 'a'])) {
+            static_cast<Pawn*>(desk[step[2] - '1'][step[1] - 'a'])->reset_trans(nullptr);
+            static_cast<Pawn*>(desk[step[2] - '1'][step[1] - 'a'])->set_sign('e');
+            static_cast<Pawn*>(desk[step[2] - '1'][step[1] - 'a'])->fmove();
+        } else if(desk[step[2] - '1'][step[1] - 'a']->sign() == 'K') {
+            desk.set_king_coordinate(desk.turn(), step);
+            static_cast<Pawn*>(desk[step[2] - '1'][step[1] - 'a'])->fmove();
+        } else if (desk[step[2] - '1'][step[1] - 'a']->sign() == 'R'){
+            static_cast<Pawn*>(desk[step[2] - '1'][step[1] - 'a'])->fmove();
+        }
+
         throw except("impossible move");
     }
-
     delete temp;
-
 }
 
-bool check_impossible_move(const Desk& desk) {
-    char ctemp[6];
-    for (int i = 0; i < 8 ; ++i) {
-        for (int j = 0; j < 8; ++j) {
-            if ((desk[i][j] != nullptr) && (desk[i][j]->color() == desk.turn())) { // step was done
-                auto lambda = [&ctemp](int i, int j, const char *coordinate) -> char * {
-                    std::map<int, char> map = {{1, '1'}, {2, '2'}, {3, '3'},
-                                               {4, '4'}, {5, '5'}, {6, '6'},
-                                               {7, '7'}, {8, '8'}};
-                    ctemp[0] = static_cast<char>(i + 97);
-                    ctemp[1] = map[j + 1];
-                    ctemp[2] = '-';
-                    std::copy(coordinate, coordinate + 2, &ctemp[3]);
-                    ctemp[5] = '\0';
-                    return ctemp;
-                };
-                try {
-                    desk[i][j]->move(lambda(j, i, desk.get_king_coordinate(desk.turn()^true)), desk, desk.turn());
-                    return false;
-                }
-                catch (const except &ex) {
-                    //nothing
-                }
-            }
-        }
-    }
-    return true;
-}
 int main(int argc, char* argv[]){
     Desk desk;
     std::cout << "LET'S START IT,\n\tGOOD LUCK FOR EVERYONE\n";
@@ -203,15 +183,18 @@ int main(int argc, char* argv[]){
         std::cout << std::endl;
 
     }*/
+
     char move_piece[7];
     while(!desk.is_mate()){
         std::cin.get(move_piece, 7);
         //std::cin.ignore(INT_MAX);
         //std::cin.clear(); std::fflush(stdin)
         try{
-            check_break_frame(move_piece);
+            if (!(!strcmp(move_piece, "0-0") || !strcmp(move_piece, "0-0-0")))
+                check_break_frame(move_piece);
             try {
                 step(move_piece, desk);
+                //check does this desk state define checkmate or not
 
             }
             catch(except& ex){
@@ -224,5 +207,6 @@ int main(int argc, char* argv[]){
         desk.print_desk();
         std::getchar();
     }
+
     return 0;
 }

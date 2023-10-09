@@ -202,7 +202,12 @@ CMakeFiles/chess.dir/desk.cpp.o: ../desk.cpp \
   /usr/include/c++/10/backward/auto_ptr.h \
   /usr/include/c++/10/cstring \
   /usr/include/string.h \
-  /usr/include/strings.h
+  /usr/include/strings.h \
+  /usr/include/c++/10/map \
+  /usr/include/c++/10/bits/stl_tree.h \
+  /usr/include/c++/10/bits/stl_map.h \
+  /usr/include/c++/10/bits/stl_multimap.h \
+  /usr/include/c++/10/bits/erase_if.h
 
 CMakeFiles/chess.dir/except.cpp.o: ../except.cpp \
   /usr/include/stdc-predef.h \
@@ -608,12 +613,7 @@ CMakeFiles/chess.dir/main.cpp.o: ../main.cpp \
   /usr/include/c++/10/backward/auto_ptr.h \
   /usr/include/c++/10/cstring \
   /usr/include/string.h \
-  /usr/include/strings.h \
-  /usr/include/c++/10/map \
-  /usr/include/c++/10/bits/stl_tree.h \
-  /usr/include/c++/10/bits/stl_map.h \
-  /usr/include/c++/10/bits/stl_multimap.h \
-  /usr/include/c++/10/bits/erase_if.h
+  /usr/include/strings.h
 
 CMakeFiles/chess.dir/memento.cpp.o: ../memento.cpp \
   /usr/include/stdc-predef.h

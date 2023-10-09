@@ -25,6 +25,7 @@ void Rook::move(const char* step, const Desk& desk, bool _turn) const{
     }
     else
         throw except("not available piece track");
+
 }
 Piece* Rook::clone() const {
     Piece *rook = new Rook(this->color());

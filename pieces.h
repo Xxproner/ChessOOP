@@ -40,11 +40,19 @@ public:
 
     Desk& operator=(Desk&& desk) noexcept;
 
+    int check_influenced_square(const char* square, bool);
+
     void turn_move_turn(){ move_turn ^= true; };
 
     bool turn() const { return move_turn; };
 
+    bool short_castling();
+
+    bool long_castling();
+
     bool is_mate() const{ return _result; };
+
+    void check_checkmate();
 
     ~Desk();
 /*    void restore(Memento *memento);
@@ -107,6 +115,10 @@ struct Rook : public Piece{
     void move(const char* step, const Desk& desk, bool _turn) const override;
     char sign() const override { return 'R'; };
     ~Rook() override = default;
+    void fmove() { start_move ^= true; };
+    bool is_first_move() { return start_move; };
+private:
+    bool start_move = true;
 };
 
 struct Knight : public Piece{
@@ -147,7 +159,8 @@ struct Pawn : public Piece{
     char sign() const override { return _sign; };
     void set_sign(char sign){ _sign = sign; }
     ~Pawn() override = default; //можно добавить сюда delete trans
-    void fmove(){ start_move = false; };
+    void fmove() { start_move ^= true; };
+    bool is_first_move() { return start_move; };
     void reset_trans(Piece *trans) {
         _trans.reset(trans);
     }
@@ -166,7 +179,10 @@ struct King : public Piece{
     void move(const char* step,  const Desk& desk, bool _turn) const override ;
     char sign() const override { return 'K'; };
     ~King() override = default;
-
+    void fmove() { start_move ^= true; };
+    bool is_first_move() { return start_move; };
+private:
+    bool start_move = true;
 };
 
 #endif //CHESS_PIECES_H
